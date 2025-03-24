@@ -14,7 +14,7 @@ A full-stack web application for managing employee data with secure authenticati
 
 ### Frontend
 - React 19
-- Redux Toolkit for state management
+- Context for state management
 - React Router Dom for navigation
 - Axios for API requests
 - Vite as the build tool
