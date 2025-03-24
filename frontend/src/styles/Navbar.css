@@ -114,6 +114,30 @@
   cursor: pointer;
 }
 
+/* User info styles */
+.user-info {
+  display: flex;
+  align-items: center;
+  color: white;
+  padding: 0 1rem;
+  font-weight: 500;
+}
+
+.user-info i {
+  margin-right: 8px;
+}
+
+.admin-badge {
+  background-color: #ffcc00;
+  color: #333;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  margin-left: 8px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
 /* Media Query for Responsive Design */
 @media screen and (max-width: 960px) {
   .nav-menu {
@@ -168,5 +192,10 @@
     transform: translate(-100%, 60%);
     font-size: 1.8rem;
     cursor: pointer;
+  }
+  
+  .user-info {
+    justify-content: center;
+    padding: 1.5rem;
   }
 } 

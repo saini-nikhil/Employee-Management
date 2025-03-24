@@ -16,11 +16,27 @@ if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir);
 }
 
-const app  = express()
+const app = express()
  
+// Enhanced CORS configuration
+const corsOptions = {
+    origin: ['http://localhost:5173', 'http://localhost:3000', '*'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+};
 
-app.use(cors())
-app.use(express.json())
+app.use(cors(corsOptions));
+app.use(express.json());
+
+// Debug endpoint for checking server status
+app.get('/api/status', (req, res) => {
+    res.status(200).json({ 
+        status: 'Server is running',
+        time: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'development' 
+    });
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api", empRoutes);
@@ -29,8 +45,9 @@ const PORT = process.env.PORT
 app.listen(PORT, async () =>{
     try {
         await connection
+        console.log("Connected to database successfully");
     } catch (error) {
-        console.log("error in connecting to db")
+        console.log("Error in connecting to database:", error);
     }
-console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 })  

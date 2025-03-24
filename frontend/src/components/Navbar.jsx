@@ -8,6 +8,7 @@ const Navbar = () => {
     const location = useLocation();
    
     const { user, logout } = useAuth();
+    const isAdmin = user?.role === 'admin';
     
     const handleLogout = () => {
         logout();
@@ -32,23 +33,47 @@ const Navbar = () => {
                 <ul className={menuOpen ? 'nav-menu active' : 'nav-menu'}>
                     {user ? (
                         <>
+                            {isAdmin ? (
+                                // Admin navigation links
+                                <>
+                                    <li className="nav-item">
+                                        <Link 
+                                            to="/admin" 
+                                            className={`nav-link ${location.pathname === '/admin' ? 'active' : ''}`}
+                                            onClick={() => setMenuOpen(false)}
+                                        >
+                                            <i className="fas fa-users-cog mr-2"></i> Admin Dashboard
+                                        </Link>
+                                    </li>
+                                    <li className="nav-item">
+                                        <Link 
+                                            to="/employees/new" 
+                                            className={`nav-link ${location.pathname === '/employees/new' ? 'active' : ''}`}
+                                            onClick={() => setMenuOpen(false)}
+                                        >
+                                            <i className="fas fa-user-plus mr-2"></i> Add Employee
+                                        </Link>
+                                    </li>
+                                </>
+                            ) : (
+                                // Regular employee navigation links
+                                <li className="nav-item">
+                                    <Link 
+                                        to="/directory" 
+                                        className={`nav-link ${location.pathname === '/directory' ? 'active' : ''}`}
+                                        onClick={() => setMenuOpen(false)}
+                                    >
+                                        <i className="fas fa-address-book mr-2"></i> Employee Directory
+                                    </Link>
+                                </li>
+                            )}
+                            
                             <li className="nav-item">
-                                <Link 
-                                    to="/employees" 
-                                    className={`nav-link ${location.pathname === '/employees' ? 'active' : ''}`}
-                                    onClick={() => setMenuOpen(false)}
-                                >
-                                    <i className="fas fa-list-ul mr-2"></i> Employees
-                                </Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link 
-                                    to="/employees/new" 
-                                    className={`nav-link ${location.pathname === '/employees/new' ? 'active' : ''}`}
-                                    onClick={() => setMenuOpen(false)}
-                                >
-                                    <i className="fas fa-user-plus mr-2"></i> Add Employee
-                                </Link>
+                                <div className="user-info">
+                                    <i className="fas fa-user mr-2"></i>
+                                    {user.username}
+                                    {isAdmin && <span className="admin-badge">Admin</span>}
+                                </div>
                             </li>
                             <li className="nav-item">
                                 <button className="logout-btn" onClick={handleLogout}>

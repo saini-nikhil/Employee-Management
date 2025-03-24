@@ -11,6 +11,15 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Debug logging
+  useEffect(() => {
+    console.log("AuthContext state:", { 
+      user, 
+      isAuthenticated: !!token && !!user, 
+      loading 
+    });
+  }, [user, token, loading]);
+
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     const storedToken = localStorage.getItem('token');
@@ -113,6 +122,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await api.get('/auth/profile');
       const userData = response.data;
+      console.log("Profile data received:", userData);
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
       return userData;

@@ -10,6 +10,7 @@ import Signup from './components/Signup';
 import EmployeeList from './components/EmployeeList';
 import EmployeeForm from './components/EmployeeForm';
 import EmployeeDetails from './components/EmployeeDetail';
+import EmployeeReadOnly from './components/EmployeeReadOnly';
 import Navbar from './components/Navbar';
 
 // Create a layout component with Navbar
@@ -23,8 +24,8 @@ const Layout = ({ children }) => (
 );
 
 // Protected route component
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
+const ProtectedRoute = ({ children, adminOnly = false, employeeOnly = false }) => {
+  const { isAuthenticated, loading, user } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -35,19 +36,34 @@ const ProtectedRoute = ({ children }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
+  // Check for admin access if required
+  if (adminOnly && user?.role !== 'admin') {
+    return <Navigate to="/directory" replace />;
+  }
+
+  // Check for employee access if required
+  if (employeeOnly && user?.role !== 'employee') {
+    return <Navigate to="/admin" replace />;
+  }
+
   return children;
 };
 
 // Public only route - redirects to employees if already logged in
 const PublicOnlyRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
   
   if (loading) {
     return <div className="loading"><i className="fas fa-spinner fa-spin"></i> Loading...</div>;
   }
 
   if (isAuthenticated) {
-    return <Navigate to="/employees" replace />;
+    // Redirect based on role
+    if (user?.role === 'admin') {
+      return <Navigate to="/admin" replace />;
+    } else {
+      return <Navigate to="/directory" replace />;
+    }
   }
 
   return children;
@@ -58,13 +74,33 @@ const createRouter = () => {
   return createBrowserRouter([
     {
       path: '/',
-      element: <Navigate to="/employees" replace />
+      element: <Navigate to="/directory" replace />
     },
     {
       path: '/employees',
       element: (
         <Layout>
+          <ProtectedRoute adminOnly={true}>
+            <EmployeeList />
+          </ProtectedRoute>
+        </Layout>
+      )
+    },
+    {
+      path: '/directory',
+      element: (
+        <Layout>
           <ProtectedRoute>
+            <EmployeeReadOnly />
+          </ProtectedRoute>
+        </Layout>
+      )
+    },
+    {
+      path: '/admin',
+      element: (
+        <Layout>
+          <ProtectedRoute adminOnly={true}>
             <EmployeeList />
           </ProtectedRoute>
         </Layout>
@@ -94,7 +130,7 @@ const createRouter = () => {
       path: '/employees/new',
       element: (
         <Layout>
-          <ProtectedRoute>
+          <ProtectedRoute adminOnly={true}>
             <EmployeeForm />
           </ProtectedRoute>
         </Layout>
@@ -104,7 +140,7 @@ const createRouter = () => {
       path: '/employees/:id/edit',
       element: (
         <Layout>
-          <ProtectedRoute>
+          <ProtectedRoute adminOnly={true}>
             <EmployeeForm />
           </ProtectedRoute>
         </Layout>
@@ -114,7 +150,7 @@ const createRouter = () => {
       path: '/employees/:id',
       element: (
         <Layout>
-          <ProtectedRoute>
+          <ProtectedRoute adminOnly={true}>
             <EmployeeDetails />
           </ProtectedRoute>
         </Layout>
@@ -125,7 +161,7 @@ const createRouter = () => {
       path: '/add-employee',
       element: (
         <Layout>
-          <ProtectedRoute>
+          <ProtectedRoute adminOnly={true}>
             <EmployeeForm />
           </ProtectedRoute>
         </Layout>
@@ -135,7 +171,7 @@ const createRouter = () => {
       path: '/edit-employee/:id',
       element: (
         <Layout>
-          <ProtectedRoute>
+          <ProtectedRoute adminOnly={true}>
             <EmployeeForm />
           </ProtectedRoute>
         </Layout>
@@ -145,7 +181,7 @@ const createRouter = () => {
       path: '/employee/:id',
       element: (
         <Layout>
-          <ProtectedRoute>
+          <ProtectedRoute adminOnly={true}>
             <EmployeeDetails />
           </ProtectedRoute>
         </Layout>

@@ -6,6 +6,7 @@ const Signup = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [role, setRole] = useState('employee');
     const [error, setError] = useState('');
     const { signup, loading, error: authError } = useAuth();
 
@@ -20,7 +21,7 @@ const Signup = () => {
         setError('');
         
         try {
-            const result = await signup({ username, email, password });
+            const result = await signup({ username, email, password, role });
             console.log('Signup success, redirecting...', result);
             
             if (result.token) {
@@ -75,6 +76,23 @@ const Signup = () => {
                             onChange={(e) => setPassword(e.target.value)} 
                             required 
                         />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="role">Role</label>
+                        <select
+                            id="role"
+                            className="form-control"
+                            value={role}
+                            onChange={(e) => setRole(e.target.value)}
+                        >
+                            <option value="employee">Employee</option>
+                            <option value="admin">Administrator</option>
+                        </select>
+                        <small className="form-text">
+                            {role === 'admin' ? 
+                                'Admin users can manage all employees in the system.' : 
+                                'Employee users can only manage employees they create.'}
+                        </small>
                     </div>
                     <button 
                         type="submit" 
