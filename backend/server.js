@@ -18,15 +18,9 @@ if (!fs.existsSync(uploadsDir)) {
 
 const app = express()
  
-// Enhanced CORS configuration
-const corsOptions = {
-    origin: ['http://localhost:5173', 'http://localhost:3000', '*'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
-};
 
-app.use(cors(corsOptions));
+
+app.use(cors());
 app.use(express.json());
 
 // Debug endpoint for checking server status
